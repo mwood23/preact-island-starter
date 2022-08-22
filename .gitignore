@@ -1,0 +1,38 @@
+
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# Config
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/tasks.json
+*.sublime-workspace
+/.idea
+
+# Caches and OS stuff
+.c9/
+.cache
+.cache
+.classpath
+.DS_Store
+.dynamodb
+
+# Node Modules
+node_modules
+
+dist
+
+# Logs
+lerna-debug.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+playwright-report
+size-plugin.json
+testem.log
+tests-out
+Thumbs.db
+ui-debug.log
+web-build/
+
