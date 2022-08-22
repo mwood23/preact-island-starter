@@ -29,10 +29,5 @@ export default {
       isolatedModules: true,
     },
     SNIPPET_API_URL: '',
-    SNIPPET_EVENTS_API_URL: '',
-    SNIPPET_CREATORS_URL: '',
-    SNIPPET_URL: '',
-    SNIPPET_BRANCH_NAME: '',
-    SNIPPET_IS_USING_APP_BLOCKS: '',
   },
 }

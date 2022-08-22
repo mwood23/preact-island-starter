@@ -2,14 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Snippets</title>
+    <title>Islands</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <style>
       body {
-        font-family: 'Futura';
+        font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI',
+          Roboto, 'Helvetica Neue', Arial, sans-serif;
       }
 
-      .preview-santorini {
+      .preview-pokemon {
         width: 100%;
         max-width: 1100px;
         margin: 80px auto;
@@ -17,8 +18,8 @@
         position: relative;
       }
 
-      .preview-santorini::before {
-        content: 'SANTORINI';
+      .preview-pokemon::before {
+        content: 'Pokemon';
         position: absolute;
         display: block;
         top: -18px;
@@ -26,7 +27,7 @@
         color: rgba(0, 0, 0, 0.5);
       }
 
-      .preview-bali {
+      .preview-preact {
         width: 100%;
         max-width: 1100px;
         margin: 80px auto;
@@ -34,8 +35,8 @@
         position: relative;
       }
 
-      .preview-bali::before {
-        content: 'BALI';
+      .preview-preact::before {
+        content: 'SANTORINI';
         position: absolute;
         display: block;
         top: -18px;
@@ -45,7 +46,7 @@
     </style>
   </head>
   <body>
-    <div data-island="santorini" class="preview-santorini">
+    <div data-island="pokemon" class="preview-pokemon">
       <!-- DO NOT COMMIT CHANGES TO THESE. THIS FILE GETS DEPLOYED -->
       <script type="text/props">
         {
@@ -57,7 +58,7 @@
         }
       </script>
     </div>
-    <div data-island="bali" class="preview-bali">
+    <div data-island="preact" class="preview-preact">
       <!-- DO NOT COMMIT CHANGES TO THESE. THIS FILE GETS DEPLOYED -->
       <script type="text/props">
         {

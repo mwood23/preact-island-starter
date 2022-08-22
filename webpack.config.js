@@ -56,7 +56,7 @@ module.exports = ({ dev, prod }) => {
     devtool: false,
     entry: buildEntryPoints(),
     output: {
-      path: path.join(__dirname, 'dist/snippets'),
+      path: path.join(__dirname, 'dist/islands'),
       filename: '[name].island.umd.js',
       libraryTarget: 'umd',
     },
@@ -113,7 +113,7 @@ module.exports = ({ dev, prod }) => {
         template: 'src/template.html',
         /**
          * Islands are served from /islands in dist so we don't pollute the root domain since these snippets are
-         * embedded into websites we do not control. It also gives us a folder to copy and deploy for app blocks.
+         * embedded into websites we do not control.
          *
          * In dev mode, we serve islands and the index.html from the root since it's dev mode. For production,
          * the index.html file is served from the root.
@@ -128,15 +128,6 @@ module.exports = ({ dev, prod }) => {
       new DefinePlugin({
         ISLAND_API_URL: JSON.stringify(process.env.ISLAND_API_URL),
       }),
-      // // You can't update these kinds of files to Shopify app blocks so we remove
-      // new (class {
-      //   apply(compiler) {
-      //     compiler.hooks.done.tap('Remove LICENSE', () => {
-      //       console.log('Remove LICENSE.txt')
-      //       rimraf.sync(path.join(__dirname, 'dist/snippets/*.LICENSE.txt'))
-      //     })
-      //   }
-      // })(),
       ...(isProd ? [new FileSizePlugin()] : []),
     ],
     stats: 'errors-warnings',

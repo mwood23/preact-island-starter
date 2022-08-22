@@ -1,13 +1,14 @@
+import './test'
+
 import { createIsland } from 'preact-island'
 
-export const Santorini = () => {
+export const Preact = () => {
   return <div>Foo</div>
 }
 
-createIsland(Santorini).render({
-  selector: '[data-island="santorini"]',
+createIsland(Preact).render({
+  selector: '[data-island="preact"]',
   initialProps: {
     snippetLocation: 'LANDINGPAGE',
-    isAutoplaced: false,
   },
 })

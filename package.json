@@ -11,6 +11,7 @@
   "author": "Marcus Wood",
   "license": "MIT",
   "dependencies": {
+    "clsx": "^1.2.1",
     "preact": "^10.5.7",
     "preact-island": "1.0.6",
     "preact-render-to-string": "^5.1.12",
@@ -18,15 +19,20 @@
     "@vanilla-extract/css": "^1.7.2",
     "@vanilla-extract/dynamic": "^2.0.2",
     "@vanilla-extract/sprinkles": "^1.4.1",
-    "@vanilla-extract/webpack-plugin": "^2.1.11"
+    "@vanilla-extract/recipes": "^0.2.5",
+    "polished": "^4.2.2",
+    "redaxios": "^0.4.1"
   },
   "devDependencies": {
     "@types/webpack": "^5.28.0",
+    "css-loader": "^6.7.1",
+    "@vanilla-extract/webpack-plugin": "^2.1.11",
     "html-webpack-plugin": "^5.5.0",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.9.3",
     "ts-jest": "27.1.4",
+    "style-loader": "^3.3.1",
     "glob": "^8.0.3",
     "gzip-size": "^6.0.0",
     "brotli-size": "^4.0.0",
