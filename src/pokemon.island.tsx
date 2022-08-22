@@ -1,11 +1,10 @@
-import './test'
+import './reset.css'
+
 import { createIsland } from 'preact-island'
-import { Box, Button, Input } from './components'
+import { Box, Button, Input, Text, Form } from './components'
 import { useState } from 'preact/hooks'
 import axios from 'redaxios'
 import { API_URL } from './config/env'
-import { Text } from './components/Text'
-import { Form } from './components/Form'
 import { JSXInternal } from 'preact/src/jsx'
 
 export const Pokemon = () => {
@@ -93,8 +92,5 @@ export const Pokemon = () => {
 
 createIsland(Pokemon).render({
   selector: '[data-island="pokemon"]',
-  initialProps: {
-    snippetLocation: 'LANDINGPAGE',
-    isAutoplaced: false,
-  },
+  initialProps: {},
 })

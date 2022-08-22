@@ -112,7 +112,7 @@ module.exports = ({ dev, prod }) => {
       new HtmlWebpackPlugin({
         template: 'src/template.html',
         /**
-         * Islands are served from /islands in dist so we don't pollute the root domain since these snippets are
+         * Islands are served from /islands in dist so we don't pollute the root domain since these islands are
          * embedded into websites we do not control.
          *
          * In dev mode, we serve islands and the index.html from the root since it's dev mode. For production,

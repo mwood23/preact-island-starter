@@ -1,10 +1,8 @@
 import { style } from '@vanilla-extract/css'
 import { recipe, RecipeVariants } from '@vanilla-extract/recipes'
-import { baseReset } from '../reset.css'
 import { sprinkles } from '../sprinkles.css'
 
 export const text = recipe({
-  base: [baseReset],
   variants: {
     size: {
       xs: style({ fontSize: 'xs', lineHeight: '1' }),
