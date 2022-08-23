@@ -14,7 +14,8 @@ export const mediaQueries = {
   desktop: 'screen and (min-width: 1024px)',
 }
 
-export const vars = createGlobalTheme(':root', {
+// Host because it's going inside of a web component!
+export const vars = createGlobalTheme(':host', {
   space: {
     nudge: '-1px',
     '0': '0',

@@ -4,21 +4,108 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const { DefinePlugin } = require('webpack')
 const FileSizePlugin = require('./FileSizePlugin')
-const rimraf = require('rimraf')
 const glob = require('glob')
+
+/**
+ * @returns {Array.<{import: string, name: string, layer: string, elementName: string}>}
+ */
+const getIslands = () => {
+  const paths = glob.sync('./src/**/*.island.{ts,tsx}')
+
+  return paths.map((path) => {
+    const name = path
+      .split('/')
+      .pop()
+      .replace(/.island.(tsx|ts)/g, '')
+
+    let elementName = `${name}-island`
+    /**
+     * If you want to name your web component something different than the filename of the island (not
+     * recommended). Please override them here.
+     */
+    if (name === 'preact') {
+      elementName = 'preact-web-component'
+    }
+
+    return {
+      path,
+      name,
+      elementName,
+      layer: name,
+    }
+  })
+}
+
+const islands = getIslands()
 
 // This builds the entry points for all of your islands.
 const buildEntryPoints = () => {
-  const paths = glob.sync('./src/**/*.island.{ts,tsx}')
   const entryPoints = {}
 
-  paths.forEach((path) => {
-    const name = path.split('/').pop().split('.')[0]
-
-    entryPoints[name] = path
+  islands.forEach((island) => {
+    entryPoints[island.name] = {
+      import: island.path,
+      layer: island.layer,
+    }
   })
 
   return entryPoints
+}
+
+const buildCssLayersFromEntryPoints = () => {
+  return islands.map(({ layer, elementName }) => {
+    return {
+      issuerLayer: layer,
+      use: [
+        /**
+         * This injects the built styles as a single style tag in the UMD bundle for the project.
+         * This makes it to where consumers do not need to worry about an external stylesheet and
+         * saves a request on shopify websites where the waterfall is normally clogged.
+         */
+        {
+          loader: 'style-loader',
+          options: {
+            injectType: 'singletonStyleTag',
+            insert: elementName,
+            attributes: { 'data-style-for': elementName },
+            // This runs untranspiled in the browser so watch out!
+            insert: (linkTag) => {
+              var styleTarget = linkTag.dataset.styleFor
+
+              if (!styleTarget) {
+                console.error(
+                  'Did not get a style target in the insert command from the style loader. No styles will be inserted. Did you override something in getIslands incorrectly?',
+                )
+
+                return
+              }
+
+              // For some reason this is needed otherwise the styles won't be injected. I think it's just the execution order
+              // inside of the bundled snippet. We don't have control over where this is injected.
+              setTimeout(() => {
+                var target = document.querySelector(styleTarget).shadowRoot
+
+                if (!target) {
+                  console.error(
+                    `Could not find a web component query selector target for "${styleTarget}". No styles will be appended. Did you name the web component at createIslandWebComponent something different than your file name? If so, you will need to override it at getIslands inside of the webpack config. This is what is expected
+                    
+createIslandWebComponent('${styleTarget}', YourComponent).render({
+  selector: ${styleTarget},
+  initialProps: {},
+})`,
+                  )
+                  return
+                }
+
+                target.prepend(linkTag)
+              }, [0])
+            },
+          },
+        },
+        'css-loader',
+      ],
+    }
+  })
 }
 
 module.exports = ({ dev, prod }) => {
@@ -53,7 +140,7 @@ module.exports = ({ dev, prod }) => {
       port: 7777,
       hot: false,
     },
-    devtool: false,
+    devtool: isDev ? 'eval' : false,
     entry: buildEntryPoints(),
     output: {
       path: path.join(__dirname, 'dist/islands'),
@@ -85,18 +172,7 @@ module.exports = ({ dev, prod }) => {
         },
         {
           test: /\.css$/i,
-          use: [
-            /**
-             * This injects the built styles as a single style tag in the UMD bundle for the project.
-             * This makes it to where consumers do not need to worry about an external stylesheet and
-             * saves a request on shopify websites where the waterfall is normally clogged.
-             */
-            {
-              loader: 'style-loader',
-              options: { injectType: 'singletonStyleTag' },
-            },
-            'css-loader',
-          ],
+          oneOf: buildCssLayersFromEntryPoints(),
         },
         {
           test: /\.(png|jpe?g|gif)$/i,
@@ -110,7 +186,51 @@ module.exports = ({ dev, prod }) => {
     },
     plugins: [
       new HtmlWebpackPlugin({
-        template: 'src/template.html',
+        inject: false,
+        templateContent: ({ htmlWebpackPlugin }) => `
+        <html>
+          <head>
+          <meta charset="utf-8" />
+          <title>Islands</title>
+          <meta name="viewport" content="width=device-width,initial-scale=1" />
+          <style>
+            body {
+              font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI',
+                Roboto, 'Helvetica Neue', Arial, sans-serif;
+            }
+      
+            .preview {
+              width: 100%;
+              max-width: 1100px;
+              margin: 80px auto;
+              border: 1px dashed rgba(0, 0, 0, 0.2);
+              position: relative;
+            }
+      
+            .preview::before {
+              content: 'Island';
+              position: absolute;
+              display: block;
+              top: -18px;
+              font-size: 11px;
+              color: rgba(0, 0, 0, 0.5);
+            }
+          </style>
+            ${htmlWebpackPlugin.tags.headTags}
+          </head>
+          <body>
+          ${islands
+            .map((island) => {
+              return `<div class="preview">
+            <${island.elementName}></${island.elementName}>
+          </div>`
+            })
+            .join('')}
+            
+            ${htmlWebpackPlugin.tags.bodyTags}
+          </body>
+        </html>
+      `,
         /**
          * Islands are served from /islands in dist so we don't pollute the root domain since these islands are
          * embedded into websites we do not control.
@@ -131,6 +251,9 @@ module.exports = ({ dev, prod }) => {
       ...(isProd ? [new FileSizePlugin()] : []),
     ],
     stats: 'errors-warnings',
+    experiments: {
+      layers: true,
+    },
     optimization: {
       minimize: true,
       minimizer: [new TerserPlugin()],

@@ -4,13 +4,13 @@
  */
 import './reset.css'
 
-import { createIsland } from 'preact-island'
+import { createIslandWebComponent } from 'preact-island'
 
 export const Preact = () => {
-  return <div>Foo</div>
+  return <div>foo</div>
 }
 
-createIsland(Preact).render({
-  selector: '[data-island="preact"]',
+createIslandWebComponent('preact-web-component', Preact).render({
+  selector: 'preact-web-component',
   initialProps: {},
 })

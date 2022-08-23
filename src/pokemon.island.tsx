@@ -1,6 +1,6 @@
 import './reset.css'
 
-import { createIsland } from 'preact-island'
+import { createIslandWebComponent } from 'preact-island'
 import { Box, Button, Input, Text, Form } from './components'
 import { useState } from 'preact/hooks'
 import axios from 'redaxios'
@@ -90,7 +90,7 @@ export const Pokemon = () => {
   )
 }
 
-createIsland(Pokemon).render({
-  selector: '[data-island="pokemon"]',
+createIslandWebComponent('pokemon-island', Pokemon).render({
+  selector: 'pokemon-island',
   initialProps: {},
 })
