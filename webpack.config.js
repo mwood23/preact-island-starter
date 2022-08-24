@@ -7,7 +7,7 @@ const FileSizePlugin = require('./FileSizePlugin')
 const glob = require('glob')
 
 /**
- * @returns {Array.<{import: string, name: string, layer: string, elementName: string, portals: string[]}>}
+ * @returns {Array.<{import: string, name: string, layer: string, elementName: string}>}
  */
 const getIslands = () => {
   const paths = glob.sync('./src/**/*.island.{ts,tsx}')
@@ -19,20 +19,18 @@ const getIslands = () => {
       .replace(/.island.(tsx|ts)/g, '')
 
     let elementName = `${name}-island`
-    const portals = []
     /**
      * If you want to name your web component something different than the filename of the island (not
      * recommended). Please override them here.
      */
-    if (name === 'call-to-action') {
-      portals.push('bounty-dimmer', 'bounty-modal')
-    }
+    // if (name === 'call-to-action') {
+    //   elementName = 'something-else'
+    // }
 
     return {
       path,
       name,
       elementName,
-      portals,
       layer: name,
     }
   })
@@ -55,12 +53,7 @@ const buildEntryPoints = () => {
 }
 
 const buildCssLayersFromEntryPoints = () => {
-  return islands.map(({ layer, elementName, portals }) => {
-    const styleForTag = () => {
-      if (portals.length === 0) return elementName
-
-      return `${elementName},${portals.join(',')}`
-    }
+  return islands.map(({ layer, elementName }) => {
     return {
       issuerLayer: layer,
       use: [
@@ -74,7 +67,7 @@ const buildCssLayersFromEntryPoints = () => {
           options: {
             injectType: 'singletonStyleTag',
             attributes: {
-              'data-style-for': styleForTag(),
+              'data-style-for': elementName,
             },
             /**
              * It appears the node given to you is initially blank with styles applied after the fact so you
@@ -94,10 +87,12 @@ const buildCssLayersFromEntryPoints = () => {
 
                 return
               }
-              var styleTargets = styleTarget.split(',')
 
               window.addEventListener('web-component-mount', (e) => {
-                if (styleTargets.includes(e.detail.target) === false) {
+                if (
+                  styleTarget !== e.detail.target &&
+                  styleTarget !== e.detail.parent
+                ) {
                   return
                 }
 
@@ -117,7 +112,7 @@ createIslandWebComponent('${styleTarget}', YourComponent).render({
 
                 // We need to clone because it's going to be inserted into separate shadow doms. If you don't clone it
                 // the tag can only be active in one context
-                target.appendChild(styleTag.cloneNode(true))
+                target.prepend(styleTag.cloneNode(true))
               })
             },
           },

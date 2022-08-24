@@ -1,3 +1,5 @@
+import './reset.css'
+
 import { createIslandWebComponent, WebComponentPortal } from 'preact-island'
 import { useState } from 'preact/hooks'
 import cx from 'clsx'
@@ -8,10 +10,10 @@ import { FC } from 'preact/compat'
 
 const islandName = 'call-to-action-island'
 
-const useWebComponentEvents = (name: string) => {
+const useWebComponentEvents = (name: string, parent?: string) => {
   useEffect(() => {
     const event = new CustomEvent('web-component-mount', {
-      detail: { target: name },
+      detail: { target: name, parent },
       bubbles: true,
     })
 
@@ -19,7 +21,7 @@ const useWebComponentEvents = (name: string) => {
 
     return () => {
       const event = new CustomEvent('web-component-unmount', {
-        detail: { target: name },
+        detail: { target: name, parent },
         bubbles: true,
       })
 
@@ -28,8 +30,12 @@ const useWebComponentEvents = (name: string) => {
   }, [name])
 }
 
-const Portalize: FC<{ name: string }> = ({ children, name }) => {
-  useWebComponentEvents(name)
+const Portalize: FC<{ name: string; parent: string }> = ({
+  children,
+  name,
+  parent,
+}) => {
+  useWebComponentEvents(name, parent)
 
   // @ts-ignore types are wrong
   return <WebComponentPortal name={name}>{children}</WebComponentPortal>
@@ -51,7 +57,7 @@ const Widget = ({ backgroundColor }: { backgroundColor?: string }) => {
       </button>
 
       {isOpen && (
-        <Portalize name="bounty-modal">
+        <Portalize name="starter-modal" parent={islandName}>
           <Box className={cx(styles.modal, isOpen && styles.modalVisible)}>
             <img
               className={styles.image}
@@ -65,7 +71,7 @@ const Widget = ({ backgroundColor }: { backgroundColor?: string }) => {
         </Portalize>
       )}
       {isOpen && (
-        <Portalize name="bounty-dimmer">
+        <Portalize name="starter-dimmer" parent={islandName}>
           <Box
             className={cx(styles.dimmer, isOpen && styles.dimmerVisible)}
             onClick={() => setIsOpen(false)}

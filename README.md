@@ -37,7 +37,6 @@
 - 🧁 Vanilla-Extract
 - 🤡 Netlify
 - 🐙 Jest and Preact Testing Library
--
 
 ## What's Preact Island?
 
@@ -74,7 +73,28 @@ npm install
 npm run dev
 ```
 
-## TODO: Document all the API stuffs
+## API
+
+### Adding Islands
+
+To add a new island, create a file suffixed with `.island.tsx`. The webpack compiler will automatically pick it up and add your new island to the index.html page. You may need to restart your development server to see the changes take hold.
+
+### Styling Islands
+
+This template uses [vanilla-extract](https://vanilla-extract.style/) for all styles. Please refer to their docs for more information. The starter has some base patterns set up, including a `Box` component that everything is built off of. There are some footguns with vanilla extract due to how CSS is interpreted by browsers so watch out!
+
+- If you use a `style()` object those are going to have higher specificity than any `sprinkles`, including props passed directly to a `<Box padding="4"></Box>`
+- Make sure `reset.css` is imported at the top of every island. This makes sure it is executed first in the stylesheet so that your styles can override it.
+
+### Deploying Islands
+
+Run `npm run build` to create your islands and a demo page that you can deploy anywhere. These are static files so it's best to go somewhere with a good CDN like Vercel, Cloudflare, Netlify, etc. The islands are in a separate directory `/islands` so you don't pollute the root domain. You can alter this output in the `webpack.config.js` if you need.
+
+### Environmental Variables
+
+The starter ships with support with environmental variables. To develop locally, add variables to `.env.local`. The starter uses Netlify for the CI and deployment process so that is where you would add variables per environment if you choose to use them for deployment.
+
+> Remember that nearly all islands are going to run on a client somewhere. These are meant to be use to create environments, all variables will be exposed onto the client (aka public), so don't put anything secretive in here!
 
 ## Credits
 

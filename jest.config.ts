@@ -1,10 +1,8 @@
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
 export default {
-  displayName: 'creators',
-  preset: '../../jest.preset.js',
+  displayName: 'starter',
   transform: {
-    '.+\\.(css|svg|png|jpg|jpeg)$': 'jest-transform-stub',
-    '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nrwl/react/plugins/jest',
+    '.+\\.(svg|png|jpg|jpeg)$': 'jest-transform-stub',
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   setupFilesAfterEnv: [
@@ -13,21 +11,23 @@ export default {
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   transformIgnorePatterns: ['../../node_modules/(?!(refractor)/)'],
-  coverageDirectory: '../../coverage/apps/creators',
+  coverageDirectory: 'coverage',
   moduleNameMapper: {
-    '.+\\.(css|svg|png|jpg|jpeg)$': 'jest-transform-stub',
+    '.+\\.(svg|png|jpg|jpeg)$': 'jest-transform-stub',
     '^react/jsx-runtime$': 'preact/jsx-runtime',
     '^react-dom$': 'preact/compat',
     '^react$': 'preact/compat',
-    // Noop style files
-    '^.+\\.(css|sass|scss|less)$': 'identity-obj-proxy',
   },
   testEnvironment: 'jsdom',
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json',
       isolatedModules: true,
+      babelConfig: {
+        comments: false,
+        plugins: ['@vanilla-extract/babel-plugin'],
+      },
     },
-    SNIPPET_API_URL: '',
+    ISLAND_API_URL: 'https://pokeapi.co/api/v2',
   },
 }
