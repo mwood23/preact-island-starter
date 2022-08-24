@@ -19,7 +19,7 @@
     "clsx": "^1.2.1",
     "polished": "^4.2.2",
     "preact": "^10.5.7",
-    "preact-island": "^1.0.6",
+    "preact-island": "^1.1.0",
     "preact-render-to-string": "^5.1.12",
     "redaxios": "^0.4.1"
   },

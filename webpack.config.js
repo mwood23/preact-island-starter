@@ -7,7 +7,7 @@ const FileSizePlugin = require('./FileSizePlugin')
 const glob = require('glob')
 
 /**
- * @returns {Array.<{import: string, name: string, layer: string, elementName: string}>}
+ * @returns {Array.<{import: string, name: string, layer: string, elementName: string, portals: string[]}>}
  */
 const getIslands = () => {
   const paths = glob.sync('./src/**/*.island.{ts,tsx}')
@@ -19,18 +19,20 @@ const getIslands = () => {
       .replace(/.island.(tsx|ts)/g, '')
 
     let elementName = `${name}-island`
+    const portals = []
     /**
      * If you want to name your web component something different than the filename of the island (not
      * recommended). Please override them here.
      */
-    if (name === 'preact') {
-      elementName = 'preact-web-component'
+    if (name === 'call-to-action') {
+      portals.push('bounty-dimmer', 'bounty-modal')
     }
 
     return {
       path,
       name,
       elementName,
+      portals,
       layer: name,
     }
   })
@@ -53,7 +55,12 @@ const buildEntryPoints = () => {
 }
 
 const buildCssLayersFromEntryPoints = () => {
-  return islands.map(({ layer, elementName }) => {
+  return islands.map(({ layer, elementName, portals }) => {
+    const styleForTag = () => {
+      if (portals.length === 0) return elementName
+
+      return `${elementName},${portals.join(',')}`
+    }
     return {
       issuerLayer: layer,
       use: [
@@ -66,11 +73,19 @@ const buildCssLayersFromEntryPoints = () => {
           loader: 'style-loader',
           options: {
             injectType: 'singletonStyleTag',
-            insert: elementName,
-            attributes: { 'data-style-for': elementName },
-            // This runs untranspiled in the browser so watch out!
-            insert: (linkTag) => {
-              var styleTarget = linkTag.dataset.styleFor
+            attributes: {
+              'data-style-for': styleForTag(),
+            },
+            /**
+             * It appears the node given to you is initially blank with styles applied after the fact so you
+             * can't rely on it to have information you need immediately.
+             *
+             * See: https://github.com/webpack-contrib/style-loader/blob/43bede4415c5ccb4680d558725e0066f715aa175/src/runtime/singletonStyleDomAPI.js#L83
+             *
+             * NOTE: This runs untranspiled in the browser so watch out!
+             */
+            insert: (styleTag) => {
+              var styleTarget = styleTag.dataset.styleFor
 
               if (!styleTarget) {
                 console.error(
@@ -79,11 +94,14 @@ const buildCssLayersFromEntryPoints = () => {
 
                 return
               }
+              var styleTargets = styleTarget.split(',')
 
-              // For some reason this is needed otherwise the styles won't be injected. I think it's just the execution order
-              // inside of the bundled snippet. We don't have control over where this is injected.
-              setTimeout(() => {
-                var target = document.querySelector(styleTarget).shadowRoot
+              window.addEventListener('web-component-mount', (e) => {
+                if (styleTargets.includes(e.detail.target) === false) {
+                  return
+                }
+
+                var target = document.querySelector(e.detail.target).shadowRoot
 
                 if (!target) {
                   console.error(
@@ -97,8 +115,10 @@ createIslandWebComponent('${styleTarget}', YourComponent).render({
                   return
                 }
 
-                target.prepend(linkTag)
-              }, [0])
+                // We need to clone because it's going to be inserted into separate shadow doms. If you don't clone it
+                // the tag can only be active in one context
+                target.appendChild(styleTag.cloneNode(true))
+              })
             },
           },
         },
