@@ -1,5 +1,3 @@
-## NOT READY (soon)!
-
 <div align="center">
   <img src="./docs/preact-island.svg" align="center" />
 </div>
