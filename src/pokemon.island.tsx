@@ -8,6 +8,7 @@ import { API_URL } from './config/env'
 import { JSXInternal } from 'preact/src/jsx'
 import { useWebComponentEvents } from './hooks/useWebComponentEvents'
 
+// small edit
 const islandName = 'pokemon-island'
 
 export const Pokemon = () => {
