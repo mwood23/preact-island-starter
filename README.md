@@ -56,15 +56,19 @@ cd <NAME OF YOUR PROJECT>
 # Remove the Git history from the repo
 rm -rf .git
 
+# Edit the name in the package.json
+
 # Create a new Git history
 git init
 git add .
 git commit -m "Initial commit"
 
+
 #############################################################
 # From here, create a new repo, hook up the remote and push #
 #############################################################
 
+# Node 16 is recommended!
 # To run the app
 npm install
 
