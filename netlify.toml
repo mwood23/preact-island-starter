@@ -27,8 +27,8 @@ ISLAND_API_URL = "https://pokeapi.co/api/v2"
 # This changes settings for ANY branch that is not deployed off of production branch
 # We are setting this to prod here to capture any "experiments" branches we are using for A/B testing on live sites
 [context.branch-deploy]
-    environment = { SNIPPET_API_URL = "https://pokeapi.co/api/v2" }
+    environment = { ISLAND_API_URL = "https://pokeapi.co/api/v2" }
 
 # we must override development back so that it will deploy dev
 [context.develop]
-    environment = { SNIPPET_API_URL = "https://pokeapi.co/api/v2" }
+    environment = { ISLAND_API_URL = "https://pokeapi.co/api/v2" }

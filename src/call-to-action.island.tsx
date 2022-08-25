@@ -5,30 +5,10 @@ import { useState } from 'preact/hooks'
 import cx from 'clsx'
 import { Box, Button, Text } from './components'
 import * as styles from './call-to-action.css'
-import { useEffect } from 'preact/hooks'
 import { FC } from 'preact/compat'
+import { useWebComponentEvents } from './hooks/useWebComponentEvents'
 
 const islandName = 'call-to-action-island'
-
-const useWebComponentEvents = (name: string, parent?: string) => {
-  useEffect(() => {
-    const event = new CustomEvent('web-component-mount', {
-      detail: { target: name, parent },
-      bubbles: true,
-    })
-
-    dispatchEvent(event)
-
-    return () => {
-      const event = new CustomEvent('web-component-unmount', {
-        detail: { target: name, parent },
-        bubbles: true,
-      })
-
-      dispatchEvent(event)
-    }
-  }, [name])
-}
 
 const Portalize: FC<{ name: string; parent: string }> = ({
   children,
@@ -41,7 +21,11 @@ const Portalize: FC<{ name: string; parent: string }> = ({
   return <WebComponentPortal name={name}>{children}</WebComponentPortal>
 }
 
-const Widget = ({ backgroundColor }: { backgroundColor?: string }) => {
+export const CallToAction = ({
+  backgroundColor,
+}: {
+  backgroundColor?: string
+}) => {
   const [isOpen, setIsOpen] = useState(false)
 
   useWebComponentEvents(islandName)
@@ -52,13 +36,17 @@ const Widget = ({ backgroundColor }: { backgroundColor?: string }) => {
         className={styles.button}
         style={{ backgroundColor: backgroundColor }}
         onClick={() => setIsOpen(true)}
+        data-testid="callToAction"
       >
         All expenses paid island vacation. Click to enter!
       </button>
 
       {isOpen && (
         <Portalize name="starter-modal" parent={islandName}>
-          <Box className={cx(styles.modal, isOpen && styles.modalVisible)}>
+          <Box
+            data-testId="modal-content"
+            className={cx(styles.modal, isOpen && styles.modalVisible)}
+          >
             <img
               className={styles.image}
               src="https://github.com/mwood23/preact-island/raw/master/docs/preact-island.svg"
@@ -73,6 +61,7 @@ const Widget = ({ backgroundColor }: { backgroundColor?: string }) => {
       {isOpen && (
         <Portalize name="starter-dimmer" parent={islandName}>
           <Box
+            data-testId="modal-dimmer"
             className={cx(styles.dimmer, isOpen && styles.dimmerVisible)}
             onClick={() => setIsOpen(false)}
           />
@@ -82,7 +71,7 @@ const Widget = ({ backgroundColor }: { backgroundColor?: string }) => {
   )
 }
 
-const island = createIslandWebComponent(islandName, Widget)
+const island = createIslandWebComponent(islandName, CallToAction)
 island.render({
   selector: islandName,
 })

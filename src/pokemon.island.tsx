@@ -6,8 +6,12 @@ import { useState } from 'preact/hooks'
 import axios from 'redaxios'
 import { API_URL } from './config/env'
 import { JSXInternal } from 'preact/src/jsx'
+import { useWebComponentEvents } from './hooks/useWebComponentEvents'
+
+const islandName = 'pokemon-island'
 
 export const Pokemon = () => {
+  useWebComponentEvents(islandName)
   const [pokemonDetails, setPokemonDetails] = useState<{
     name: string
     sprite: string
@@ -61,24 +65,33 @@ export const Pokemon = () => {
           name="pokemon"
           value={pokemonInput}
           placeholder="squirtle"
+          data-testId="pokemon"
           onInput={(e) => setPokemonInput((e.target as HTMLInputElement).value)}
         />
-        <Button isLoading={pokemonLoading} onClick={onSubmit}>
+        <Button
+          data-testId="submitPokemon"
+          isLoading={pokemonLoading}
+          onClick={onSubmit}
+        >
           Submit
         </Button>
         {pokemonError}
       </Form>
       <Box border="sm" borderColor={'gray'} p="4">
         {pokemonDetails != null ? (
-          <Box>
+          <Box data-testId="pokemonDetails">
             <Text mb="2">Pokemon Details</Text>
             <Box display={'flex'}>
               <Box flexShrink={0}>
                 <img src={pokemonDetails.sprite} />
               </Box>
               <Box>
-                <Text>Name: {pokemonDetails.name}</Text>
-                <Text>Number: {pokemonDetails.number}</Text>
+                <Text data-testId="pokemonName">
+                  Name: {pokemonDetails.name}
+                </Text>
+                <Text data-testId="pokemonNumber">
+                  Number: {pokemonDetails.number}
+                </Text>
               </Box>
             </Box>
           </Box>
@@ -90,7 +103,7 @@ export const Pokemon = () => {
   )
 }
 
-createIslandWebComponent('pokemon-island', Pokemon).render({
-  selector: 'pokemon-island',
+createIslandWebComponent(islandName, Pokemon).render({
+  selector: islandName,
   initialProps: {},
 })

@@ -35,4 +35,9 @@ tests-out
 Thumbs.db
 ui-debug.log
 web-build/
-
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/test-results/
+/playwright-report/
+/playwright/.cache/

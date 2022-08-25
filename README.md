@@ -26,7 +26,7 @@
 - 🐿️ Dynamic island build environment thanks to Webpack layers
 - 🚢 Built in Netlify deployments
 - 🙏 Environmental variable support
-- 🐙 Jest and Preact testing library included
+- 🔥 Playwright testing built in
 - 👔 Fully typed with TypeScript
 
 ## Stack
@@ -36,7 +36,7 @@
 - 🌐 Webpack 5
 - 🧁 Vanilla-Extract
 - 🤡 Netlify
-- 🐙 Jest and Preact Testing Library
+- 🔥 Playwright testing
 
 ## What's Preact Island?
 

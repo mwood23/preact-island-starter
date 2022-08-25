@@ -1,8 +1,6 @@
 import { Box, BoxProps } from './box'
 import { text, TextVariants } from './text.css'
 import cx from 'clsx'
-import { assignInlineVars } from '@vanilla-extract/dynamic'
-import { vars } from '../vars.css'
 
 export type TextProps = BoxProps & {
   as?: Extract<BoxProps['as'], 'span' | 'div' | 'b' | 'i' | 'u'>
